@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Portfolio - Pro Edition</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fun: {
+                            bg: '#121212',      // Latar Belakang Gelap (Lebih Maskulin)
+                            accent1: '#f97316',  // Orange (Energi/Aksi)
+                            accent2: '#0ea5e9',  // Blue Sky (Teknologi)
+                            accent3: '#6366f1',  // Indigo (Kreativitas)
+                            card: '#1e1e1e',    // Warna Kartu
+                            dark: '#f8fafc',    // Warna Teks (Putih Terang)
+                            border: '#334155',  // Warna Garis
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Fredoka', 'sans-serif'],
+                        pixel: ['"VT323"', 'monospace'],
+
+                                // Tambahkan ini
+                        heading: ['"Bebas-Neue"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'pop': '4px 4px 0px 0px #000000',
+                        'pop-hover': '2px 2px 0px 0px #000000',
+                        'pop-orange': '4px 4px 0px 0px #ea580c',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Scrollbar Maskulin */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { 
+            background: #f97316; 
+            border: 2px solid #121212;
+            border-radius: 5px;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.3; pointer-events: none;
+        }
+
+        .pop-card {
+            background: #1e1e1e;
+            border: 2px solid #334155;
+            box-shadow: 6px 6px 0px 0px #000;
+            transition: all 0.2s ease;
+        }
+        .pop-card:hover {
+            transform: translate(-2px, -2px);
+            border-color: #f97316;
+            box-shadow: 8px 8px 0px 0px #000;
+        }
+        
+        .pop-button {
+            border: 2px solid black;
+            box-shadow: 4px 4px 0px 0px black;
+            transition: all 0.1s;
+        }
+        .pop-button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px black;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .floating { animation: float 5s ease-in-out infinite; }
+    </style>
+</head>
+<body class="bg-fun-bg text-fun-dark font-sans overflow-x-hidden">
+
+    <canvas id="bg-canvas"></canvas>
+
+    <header class="fixed w-full top-0 z-40 bg-black/80 backdrop-blur-md border-b border-fun-border">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#beranda" class="text-2xl font-black tracking-tighter hover:text-fun-accent1 transition-colors flex items-center gap-2">
+                <i data-lucide="terminal" class="w-8 h-8 text-fun-accent1"></i>
+                Farih.Dev
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm tracking-widest font-bold">
+                <a href="#beranda" class="hover:text-fun-accent1 transition-colors">START</a>
+                <a href="#tentang" class="hover:text-fun-accent2 transition-colors">ABOUT</a>
+                <a href="#portofolio" class="hover:text-fun-accent1 transition-colors">WORKS</a>
+                <a href="#kontak" class="hover:text-fun-accent3 transition-colors">CONNECT</a>
+               <a href="assets/CV_Farih Rahmatullah_2025 - Game Dev.pdf"
+                    download
+                    class="pop-button bg-fun-accent1 px-4 py-1 rounded text-black flex items-center gap-2 text-xs">
+                    RESUME
+                    </a>
+
+            </nav>
+
+            <button id="menu-btn" class="md:hidden text-fun-accent1">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+       <section id="beranda" class="min-h-screen flex items-center justify-center pt-16 relative">
+    <div class="container mx-auto px-6 z-10">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-12">
+            
+            <div class="text-center md:text-left flex-1">
+                <div class="inline-block bg-fun-accent1/10 border border-fun-accent1 text-fun-accent1 px-4 py-1 rounded-md mb-6 font-pixel text-xl tracking-widest">
+                    GAME START
+                </div>
+                <h1 class=" font-heading text-6xl md:text-8xl font-black mb-6 tracking-tighter">
+                    <span class="text-white">PORTFOLIO</span>
+                </h1>
+                <p class="text-lg font-medium text-gray-400 mb-10 max-w-xl italic">
+                    Mahasiswa Game Developer (Unity & C#).Berpengalaman membangun game dari konsep hingga rilis. Dan ingin terus belajar.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#portofolio" class="pop-button bg-fun-accent1 text-black px-8 py-3 rounded-md font-black">LAUNCH PROJECTS</a>
+                </div>
+            </div>
+
+            <div class="flex-1 flex justify-center">
+                <div class="relative group">
+                    <div class="absolute -inset-2 bg-fun-accent1 rounded-2xl rotate-3 group-hover:rotate-0 transition-transform"></div>
+                    <div class="relative w-64 h-80 md:w-80 md:h-96 bg-zinc-800 rounded-2xl border-4 border-black overflow-hidden shadow-2xl">
+                        <img src="assets/pp.jpg" alt="Foto Profil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+        <section id="tentang" class="py-24 bg-fun-card/50">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-16 items-center">
+                    <div>
+                        <h2 class="text-5xl font-black mb-8 border-l-8 border-fun-accent1 pl-6">ABOUT ME</h2>
+                        <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                            Saya mahasiswa semester 5 yang fokus pada pengembangan game menggunakan Unity.<br><br> Saya tertarik pada pembuatan mekanik gameplay, kontrol karakter, sistem fisika, dan UI game yang terasa responsif dan menyenangkan dimainkan. Saya menguasai Unity, C#, dan Git, serta memiliki pengalaman mengerjakan beberapa proyek pribadi.<br><br> Saya selalu berusaha berkembang dengan mempelajari teknik baru untuk
+meningkatkan kualitas game yang saya buat</span>
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">C#</span>
+                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">UNINTY ENGINE</span>
+                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">GIT / GITHUB</span>
+                        </div>
+                    </div>
+
+                    <div class="pop-card p-8 border-zinc-700">
+                        <h3 class="font-pixel text-2xl mb-6 text-fun-accent1 tracking-tighter">KEMAMPUAN</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>Logic</span><span>88%</span></div>
+                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                                    <div class="h-full bg-fun-accent2 w-[88%]"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>Unity Engine</span><span>79%</span></div>
+                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                                    <div class="h-full bg-fun-accent1 w-[79%]"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>C#</span><span>80%</span></div>
+                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
+                                    <div class="h-full bg-fun-accent3 w-[80%]"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portofolio" class="py-24">
+    <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+            <h2 class="text-6xl font-black italic">TOP MISSIONS</h2>
+            <p class="text-fun-accent1 font-pixel text-xl tracking-tighter">/// SELECT_PROJECT_v2.0</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <div class="pop-card group relative overflow-hidden border-zinc-800 bg-zinc-900">
+                <div class="h-64 overflow-hidden border-b-2 border-black relative">
+                    <img src="assets/mole.png" alt="Mole Run" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white">Mole Run</h3>
+                        <span class="text-xs font-bold px-3 py-1 bg-fun-accent2/20 text-fun-accent2 border border-fun-accent2/50 rounded uppercase">Action</span>
+                    </div>
+                    <p class="text-gray-400 mb-8 text-sm leading-relaxed">Mole Run adalah game endless runner ringan dan cepat yang terinspirasi dari gaya dino run, namun dengan twist unik: kamu dapat masuk ke dalam tanah kapan saja untuk menghindari bahaya. Gunakan kecepatan, timing, dan insting hewan pengeruk tanah untuk bertahan selama mungkin.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href="https://wekawekadev.itch.io/mole-run" class="pop-button bg-fun-accent1 text-black font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-orange-500 transition-colors">
+                            <i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD
+                        </a>
+                        <a href="https://github.com/farihrahmatullah/MoleRun" class="border-2 border-white/20 text-white font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-black transition-all">
+                            <i data-lucide="github" class="w-4 h-4"></i> SOURCE
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pop-card group relative overflow-hidden border-zinc-800 bg-zinc-900">
+                <div class="h-64 overflow-hidden border-b-2 border-black relative">
+                    <img src="assets/neurun.png" alt="Neurun" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white">Neurun</h3>
+                        <span class="text-xs font-bold px-3 py-1 bg-fun-accent3/20 text-fun-accent3 border border-fun-accent3/50 rounded uppercase">Puzzle</span>
+                    </div>
+                    <p class="text-gray-400 mb-8 text-sm leading-relaxed">Neurun adalah aplikasi belajar Hiragana dan Katakana yang dirancang untuk membantu pemula menguasai huruf Jepang melalui latihan cepat, interaktif, dan berulang. Tidak ada teori panjang pengguna langsung belajar lewat pengenalan bentuk huruf, penyusunan kata, dan respon instan.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <a href=" https://play.google.com/store/apps/details?id=com.Wekaweka.Neurun" class="pop-button bg-fun-accent1 text-black font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-orange-500 transition-colors">
+                            <i data-lucide="play" class="w-4 h-4"></i> PLAY NOW
+                        </a>
+                        <a href="https://github.com/farihrahmatullah/Neurun" class="border-2 border-white/20 text-white font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-black transition-all">
+                            <i data-lucide="github" class="w-4 h-4"></i> SOURCE
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <section id="kontak" class="py-24 bg-black border-t border-fun-border">
+  <div class="container mx-auto px-6 max-w-4xl">
+    <div class="grid md:grid-cols-3 gap-12">
+
+      <!-- INFO -->
+      <div class="md:col-span-1">
+        <h2 class="text-4xl font-black mb-6 uppercase">Transmission</h2>
+        <p class="text-gray-500 mb-8 font-medium italic">
+          "Tinggalkan pesan setelah bunyi beep untuk kolaborasi level selanjutnya."
+        </p>
+
+        <div class="space-y-4 font-bold">
+          <div class="flex items-center gap-3 text-fun-accent1">
+            <i data-lucide="mail"></i>
+            farihrahmatullah453@gmail.com
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="github"></i>
+            github.com/farihrahmatullah
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="md:col-span-2">
+        <form
+          action="https://formsubmit.co/farihrahmatullah453@gmail.com"
+          method="POST"
+          class="space-y-6"
+        >
+          <!-- CONFIG -->
+          <input type="hidden" name="_subject" value="Pesan dari Portfolio Website">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+
+          <!-- INPUT -->
+          <input
+            type="text"
+            name="name"
+            required
+            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
+            placeholder="YOUR_IDENTIFIER"
+          >
+
+          <input
+            type="email"
+            name="email"
+            required
+            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
+            placeholder="YOUR_EMAIL"
+          >
+
+          <textarea
+            name="message"
+            rows="5"
+            required
+            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
+            placeholder="THE_MISSION_DETAILS"
+          ></textarea>
+
+          <!-- BUTTON -->
+          <button
+            type="submit"
+            class="w-full pop-button bg-fun-accent1 text-black font-black py-4 rounded uppercase tracking-widest text-lg"
+          >
+            EXECUTE SEND
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <footer class="py-8 bg-zinc-950 text-gray-600 text-center font-pixel text-sm border-t border-zinc-900">
+        <p>[ ERROR 404: QUIT NOT FOUND ] © 2025 COMMAND_CENTER</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        
+        // Canvas Particles (Techy Look)
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speedY = Math.random() * 0.5 + 0.2;
+                this.opacity = Math.random();
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < 0) this.y = height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(249, 115, 22, ${this.opacity})`;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 100; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', () => { resize(); init(); });
+        resize(); init(); animate();
+    </script>
+</body>
+</html>
