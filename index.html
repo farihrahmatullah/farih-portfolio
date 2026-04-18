@@ -3,411 +3,889 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev Portfolio - Pro Edition</title>
+    <title>Farih.Dev — Game Developer Portfolio</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         fun: {
-                            bg: '#121212',      // Latar Belakang Gelap (Lebih Maskulin)
-                            accent1: '#f97316',  // Orange (Energi/Aksi)
-                            accent2: '#0ea5e9',  // Blue Sky (Teknologi)
-                            accent3: '#6366f1',  // Indigo (Kreativitas)
-                            card: '#1e1e1e',    // Warna Kartu
-                            dark: '#f8fafc',    // Warna Teks (Putih Terang)
-                            border: '#334155',  // Warna Garis
+                            bg: '#0a0a0a',
+                            accent1: '#f97316',
+                            accent2: '#0ea5e9',
+                            accent3: '#6366f1',
+                            card: '#111111',
+                            dark: '#f8fafc',
+                            border: '#1e2a38',
                         }
                     },
                     fontFamily: {
                         sans: ['Fredoka', 'sans-serif'],
                         pixel: ['"VT323"', 'monospace'],
-
-                                // Tambahkan ini
-                        heading: ['"Bebas-Neue"', 'sans-serif'],
+                        heading: ['"Bebas Neue"', 'sans-serif'],
+                        mono: ['"Share Tech Mono"', 'monospace'],
                     },
-                    boxShadow: {
-                        'pop': '4px 4px 0px 0px #000000',
-                        'pop-hover': '2px 2px 0px 0px #000000',
-                        'pop-orange': '4px 4px 0px 0px #ea580c',
-                    }
                 }
             }
         }
     </script>
     
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=VT323&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=VT323&family=Bebas+Neue&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
     <style>
-        /* Custom Scrollbar Maskulin */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #121212; }
-        ::-webkit-scrollbar-thumb { 
-            background: #f97316; 
-            border: 2px solid #121212;
-            border-radius: 5px;
-        }
+        /* ---- RESET & BASE ---- */
+        *, *::before, *::after { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 3px; }
 
+        /* ---- CANVAS BG ---- */
         #bg-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.3; pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none;
         }
 
-        .pop-card {
-            background: #1e1e1e;
-            border: 2px solid #334155;
-            box-shadow: 6px 6px 0px 0px #000;
-            transition: all 0.2s ease;
+        /* ---- GRID OVERLAY ---- */
+        .grid-overlay {
+            position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
         }
-        .pop-card:hover {
-            transform: translate(-2px, -2px);
+
+        /* ---- SCAN LINES ---- */
+        .scanlines {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.07) 2px,
+                rgba(0,0,0,0.07) 4px
+            );
+        }
+
+        /* ---- NOISE TEXTURE ---- */
+        .noise::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.06; pointer-events: none; z-index: 1;
+        }
+
+        /* ---- NAV ---- */
+        .nav-bar {
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid rgba(249,115,22,0.15);
+        }
+        .nav-link {
+            position: relative; font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem; letter-spacing: 0.15em; color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; left: 0; bottom: -4px;
+            width: 0; height: 1px; background: #f97316;
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .nav-link:hover { color: #f97316; }
+        .nav-link:hover::after { width: 100%; }
+
+        /* ---- HERO ---- */
+        .hero-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem; letter-spacing: 0.2em;
+            border: 1px solid rgba(249,115,22,0.4);
+            background: rgba(249,115,22,0.06);
+            color: #f97316; padding: 6px 16px;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .hero-tag::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: #f97316;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .glitch-title {
+            position: relative; font-family: 'Bebas Neue', sans-serif;
+            line-height: 0.9;
+        }
+        .glitch-title::before,
+        .glitch-title::after {
+            content: attr(data-text);
+            position: absolute; top: 0; left: 0; width: 100%;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+        .glitch-title::before {
+            color: #0ea5e9; clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+            animation: glitch-1 4s infinite;
+        }
+        .glitch-title::after {
+            color: #f97316; clip-path: polygon(0 55%, 100% 55%, 100% 70%, 0 70%);
+            animation: glitch-2 4s infinite;
+        }
+        @keyframes glitch-1 {
+            0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+            92% { transform: translateX(-4px); opacity: 0.7; }
+            94% { transform: translateX(4px); opacity: 0.7; }
+            96% { transform: translateX(0); opacity: 0; }
+        }
+        @keyframes glitch-2 {
+            0%, 93%, 100% { transform: translateX(0); opacity: 0; }
+            95% { transform: translateX(3px); opacity: 0.6; }
+            97% { transform: translateX(-3px); opacity: 0.6; }
+            99% { transform: translateX(0); opacity: 0; }
+        }
+
+        .type-cursor {
+            display: inline-block; width: 2px; height: 1.1em;
+            background: #f97316; margin-left: 2px; vertical-align: middle;
+            animation: blink 0.8s step-end infinite;
+        }
+
+        /* ---- PHOTO FRAME ---- */
+        .photo-frame {
+            position: relative; display: inline-block;
+        }
+        .photo-frame::before {
+            content: ''; position: absolute;
+            inset: -2px; z-index: -1;
+            background: conic-gradient(#f97316, #6366f1, #0ea5e9, #f97316);
+            border-radius: 18px;
+            animation: spin-border 8s linear infinite;
+        }
+        @keyframes spin-border {
+            to { transform: rotate(360deg); }
+        }
+        .photo-frame-inner {
+            border-radius: 16px; overflow: hidden;
+            background: #111;
+            border: 3px solid #0a0a0a;
+        }
+
+        /* ---- CORNER BRACKETS ---- */
+        .bracket-tl, .bracket-tr, .bracket-bl, .bracket-br {
+            position: absolute; width: 20px; height: 20px;
+        }
+        .bracket-tl { top: 8px; left: 8px; border-top: 2px solid #f97316; border-left: 2px solid #f97316; }
+        .bracket-tr { top: 8px; right: 8px; border-top: 2px solid #f97316; border-right: 2px solid #f97316; }
+        .bracket-bl { bottom: 8px; left: 8px; border-bottom: 2px solid #f97316; border-left: 2px solid #f97316; }
+        .bracket-br { bottom: 8px; right: 8px; border-bottom: 2px solid #f97316; border-right: 2px solid #f97316; }
+
+        /* ---- SECTION HEADER ---- */
+        .section-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem; letter-spacing: 0.3em; color: #f97316;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::before { content: '//'; color: #334155; }
+        .section-label::after {
+            content: ''; flex: 1; max-width: 80px; height: 1px;
+            background: linear-gradient(90deg, #f97316, transparent);
+        }
+
+        /* ---- ABOUT SECTION ---- */
+        .about-section { background: #0a0a0a; }
+        .terminal-box {
+            background: #050505;
+            border: 1px solid #1e2a38;
+            border-top: 3px solid #f97316;
+            position: relative; overflow: hidden;
+        }
+        .terminal-box::before {
+            content: '● ● ●'; position: absolute; top: 12px; left: 16px;
+            font-size: 10px; color: #334155; letter-spacing: 6px;
+        }
+        .terminal-header {
+            background: #0d0d0d;
+            border-bottom: 1px solid #1e2a38;
+            padding: 10px 16px; padding-left: 60px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem; color: #475569; letter-spacing: 0.1em;
+        }
+
+        .skill-bar {
+            position: relative; height: 4px; background: #111;
+            border: 1px solid #1e2a38; overflow: hidden;
+        }
+        .skill-bar-fill {
+            height: 100%; position: relative;
+            animation: fill-bar 1.5s ease forwards;
+            transform-origin: left;
+        }
+        .skill-bar-fill::after {
+            content: ''; position: absolute; right: 0; top: 0; bottom: 0;
+            width: 40px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+            animation: shimmer 2s ease-in-out infinite;
+        }
+        @keyframes fill-bar {
+            from { width: 0; }
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* ---- CARDS ---- */
+        .project-card {
+            background: #0d0d0d;
+            border: 1px solid #1e2a38;
+            position: relative; overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .project-card::before {
+            content: ''; position: absolute; inset: 0; z-index: 0;
+            background: linear-gradient(135deg, rgba(249,115,22,0.03), transparent 50%);
+            opacity: 0; transition: opacity 0.35s;
+        }
+        .project-card:hover {
+            border-color: rgba(249,115,22,0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(249,115,22,0.08), 0 0 0 1px rgba(249,115,22,0.15);
+        }
+        .project-card:hover::before { opacity: 1; }
+
+        .project-img-wrap {
+            position: relative; overflow: hidden;
+        }
+        .project-img-wrap::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.85) 100%);
+        }
+        .project-img-wrap img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+            filter: saturate(0.8) brightness(0.85);
+        }
+        .project-card:hover .project-img-wrap img {
+            transform: scale(1.06);
+            filter: saturate(1) brightness(1);
+        }
+
+        .scan-line-anim {
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #f97316, transparent);
+            animation: scan 3s linear infinite;
+            z-index: 5;
+        }
+        @keyframes scan {
+            from { top: 0; }
+            to { top: 100%; }
+        }
+
+        .tech-tag {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.6rem; letter-spacing: 0.12em;
+            border: 1px solid;
+            padding: 3px 10px;
+        }
+
+        /* ---- BUTTONS ---- */
+        .btn-primary {
+            position: relative; overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem; letter-spacing: 0.2em;
+            background: #f97316; color: #000;
+            border: none; padding: 14px 28px;
+            cursor: pointer; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-primary::after {
+            content: ''; position: absolute; inset: 0;
+            background: rgba(255,255,255,0.15);
+            transform: translateX(-110%) skewX(-20deg);
+            transition: transform 0.4s;
+        }
+        .btn-primary:hover { background: #ea580c; }
+        .btn-primary:hover::after { transform: translateX(110%) skewX(-20deg); }
+
+        .btn-ghost {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem; letter-spacing: 0.15em;
+            color: #94a3b8; border: 1px solid #1e2a38;
+            padding: 13px 24px; display: inline-flex;
+            align-items: center; gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-ghost:hover {
+            color: #f8fafc; border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .btn-resume {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.65rem; letter-spacing: 0.15em;
+            background: transparent; color: #f97316;
+            border: 1px solid rgba(249,115,22,0.5);
+            padding: 7px 16px; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-resume:hover {
+            background: rgba(249,115,22,0.1);
             border-color: #f97316;
-            box-shadow: 8px 8px 0px 0px #000;
-        }
-        
-        .pop-button {
-            border: 2px solid black;
-            box-shadow: 4px 4px 0px 0px black;
-            transition: all 0.1s;
-        }
-        .pop-button:hover {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px black;
         }
 
+        /* ---- CONTACT ---- */
+        .contact-section {
+            background: #050505;
+            border-top: 1px solid #1e2a38;
+        }
+        .input-tech {
+            width: 100%;
+            background: #0a0a0a;
+            border: 1px solid #1e2a38;
+            color: #f8fafc;
+            padding: 14px 18px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .input-tech::placeholder {
+            color: #334155;
+            letter-spacing: 0.05em;
+        }
+        .input-tech:focus {
+            border-color: rgba(249,115,22,0.6);
+            background: #0d0d0d;
+        }
+
+        /* ---- STAT COUNTER ---- */
+        .stat-card {
+            border: 1px solid #1e2a38;
+            padding: 20px;
+            position: relative; overflow: hidden;
+            background: #0d0d0d;
+        }
+        .stat-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0;
+            width: 100%; height: 2px; background: #f97316;
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.4s;
+        }
+        .stat-card:hover::after { transform: scaleX(1); }
+
+        /* ---- FLOATING ANIMATION ---- */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-12px); }
         }
-        .floating { animation: float 5s ease-in-out infinite; }
+        .floating { animation: float 6s ease-in-out infinite; }
+
+        /* ---- HEX DECORATION ---- */
+        .hex-deco {
+            position: absolute; opacity: 0.03;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.55rem; color: #f97316;
+            letter-spacing: 0.05em; line-height: 1.6;
+            pointer-events: none; white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* ---- MOBILE ---- */
+        @media (max-width: 768px) {
+            .glitch-title { font-size: 4rem !important; }
+        }
     </style>
 </head>
+
 <body class="bg-fun-bg text-fun-dark font-sans overflow-x-hidden">
 
+    <!-- Backgrounds -->
     <canvas id="bg-canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="scanlines"></div>
 
-    <header class="fixed w-full top-0 z-40 bg-black/80 backdrop-blur-md border-b border-fun-border">
+    <!-- ======================== NAV ======================== -->
+    <header class="nav-bar fixed w-full top-0 z-40">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#beranda" class="text-2xl font-black tracking-tighter hover:text-fun-accent1 transition-colors flex items-center gap-2">
-                <i data-lucide="terminal" class="w-8 h-8 text-fun-accent1"></i>
-                Farih.Dev
+
+            <a href="#beranda" class="flex items-center gap-3 group">
+                <div class="w-8 h-8 border border-fun-accent1/50 flex items-center justify-center relative">
+                    <i data-lucide="terminal" class="w-4 h-4 text-fun-accent1"></i>
+                    <div class="absolute -inset-1 border border-fun-accent1/20 animate-ping" style="animation-duration:3s"></div>
+                </div>
+                <span class="font-mono text-sm tracking-widest text-white group-hover:text-fun-accent1 transition-colors">FARIH<span class="text-fun-accent1">.</span>DEV</span>
             </a>
 
-            <nav class="hidden md:flex items-center gap-8 text-sm tracking-widest font-bold">
-                <a href="#beranda" class="hover:text-fun-accent1 transition-colors">START</a>
-                <a href="#tentang" class="hover:text-fun-accent2 transition-colors">ABOUT</a>
-                <a href="#portofolio" class="hover:text-fun-accent1 transition-colors">WORKS</a>
-                <a href="#kontak" class="hover:text-fun-accent3 transition-colors">CONNECT</a>
-               <a href="assets/CV_Farih Rahmatullah_2025-Game_Dev.pdf"
-                    download
-                    class="pop-button bg-fun-accent1 px-4 py-1 rounded text-black flex items-center gap-2 text-xs">
-                    RESUME
-                    </a>
-
+            <nav class="hidden md:flex items-center gap-10">
+                <a href="#beranda" class="nav-link">START</a>
+                <a href="#tentang" class="nav-link">ABOUT</a>
+                <a href="#portofolio" class="nav-link">WORKS</a>
+                <a href="#kontak" class="nav-link">CONNECT</a>
+                <a href="assets/CV_Farih Rahmatullah_2025 - Game Dev.pdf" download class="btn-resume">
+                    <i data-lucide="download" class="w-3 h-3"></i> RESUME
+                </a>
             </nav>
 
-            <button id="menu-btn" class="md:hidden text-fun-accent1">
-                <i data-lucide="menu" class="w-6 h-6"></i>
+            <button id="menu-btn" class="md:hidden text-fun-accent1 border border-fun-accent1/30 p-2">
+                <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
         </div>
     </header>
 
-     <!-- Mobile Menu -->
-<div id="mobile-menu"
-     class="hidden md:hidden fixed top-16 left-0 w-full bg-black/95 backdrop-blur-md z-30">
-    <div class="flex flex-col items-center gap-6 py-8 text-sm tracking-widest font-bold">
-        <a href="#beranda" class="hover:text-fun-accent1">START</a>
-        <a href="#tentang" class="hover:text-fun-accent2">ABOUT</a>
-        <a href="#portofolio" class="hover:text-fun-accent1">WORKS</a>
-        <a href="#kontak" class="hover:text-fun-accent3">CONNECT</a>
-        <a href="assets/CV_Farih Rahmatullah_2025-Game_Dev.pdf"
-           download
-           class="bg-fun-accent1 px-6 py-2 rounded text-black">
-           RESUME
-        </a>
-    </div>
-</div>
-
-    <main>
-       <section id="beranda" class="min-h-screen flex items-center justify-center pt-16 relative">
-    <div class="container mx-auto px-6 z-10">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-12">
-            
-            <div class="text-center md:text-left flex-1">
-                <div class="inline-block bg-fun-accent1/10 border border-fun-accent1 text-fun-accent1 px-4 py-1 rounded-md mb-6 font-pixel text-xl tracking-widest">
-                    GAME START
-                </div>
-                <h1 class=" font-heading text-6xl md:text-8xl font-black mb-6 tracking-tighter">
-                    <span class="text-white">PORTFOLIO</span>
-                </h1>
-                <p class="text-lg font-medium text-gray-400 mb-10 max-w-xl italic">
-                    Mahasiswa Game Developer (Unity & C#).Berpengalaman membangun game dari konsep hingga rilis. Dan ingin terus belajar.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#portofolio" class="pop-button bg-fun-accent1 text-black px-8 py-3 rounded-md font-black">LAUNCH PROJECTS</a>
-                </div>
-            </div>
-
-            <div class="flex-1 flex justify-center">
-                <div class="relative group">
-                    <div class="absolute -inset-2 bg-fun-accent1 rounded-2xl rotate-3 group-hover:rotate-0 transition-transform"></div>
-                    <div class="relative w-64 h-80 md:w-80 md:h-96 bg-zinc-800 rounded-2xl border-4 border-black overflow-hidden shadow-2xl">
-                        <img src="assets/pp.jpg" alt="Foto Profil" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
-                    </div>
-                </div>
-            </div>
-
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden fixed top-16 left-0 w-full z-30"
+         style="background: rgba(10,10,10,0.98); backdrop-filter: blur(20px); border-bottom: 1px solid #1e2a38;">
+        <div class="flex flex-col items-center gap-6 py-8">
+            <a href="#beranda" class="nav-link text-sm">START</a>
+            <a href="#tentang" class="nav-link text-sm">ABOUT</a>
+            <a href="#portofolio" class="nav-link text-sm">WORKS</a>
+            <a href="#kontak" class="nav-link text-sm">CONNECT</a>
+            <a href="assets/CV_Farih Rahmatullah_2025 - Game Dev.pdf" download class="btn-resume mt-2">
+                <i data-lucide="download" class="w-3 h-3"></i> RESUME
+            </a>
         </div>
     </div>
-</section>
 
-        <section id="tentang" class="py-24 bg-fun-card/50">
+    <main>
+
+        <!-- ======================== HERO ======================== -->
+        <section id="beranda" class="min-h-screen flex items-center justify-center pt-20 relative">
+
+            <!-- Hex decoration top-right -->
+            <div class="hex-deco" style="top:20%;right:0;width:200px;height:300px;font-size:0.5rem;opacity:0.04">
+                01001111 01010010 01000001 01001110 01000111 01000101<br>
+                00110000 01111000 01000110 01000100 00110100 00110110<br>
+                01000111 01000001 01001101 01000101 01000100 01000101<br>
+                00110000 01111000 01000110 01000100 00110100 00110110<br>
+                01001111 01010010 01000001 01001110 01000111 01000101
+            </div>
+
+            <div class="container mx-auto px-6 z-10">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-16">
+
+                    <!-- LEFT -->
+                    <div class="flex-1 text-center md:text-left">
+
+                        <div class="hero-tag mb-8">SYSTEM INITIALIZED — GAME_DEVELOPER_v2.5</div>
+
+                        <h1 class="glitch-title text-7xl md:text-9xl text-white mb-6"
+                            data-text="PORTFOLIO">PORTFOLIO</h1>
+
+                        <div class="flex items-start gap-3 mb-10 font-mono text-sm text-slate-400 max-w-xl">
+                            <span class="text-fun-accent1 mt-0.5 shrink-0">›</span>
+                            <p id="typed-text" class="leading-relaxed">
+                                Mahasiswa Game Developer (Unity &amp; C#). Berpengalaman membangun game dari konsep hingga rilis. Dan ingin terus belajar.<span class="type-cursor"></span>
+                            </p>
+                        </div>
+
+                        <!-- Stat row -->
+                        <div class="flex gap-8 mb-10 justify-center md:justify-start">
+                            <div class="text-center md:text-left">
+                                <div class="font-heading text-3xl text-fun-accent1">2+</div>
+                                <div class="font-mono text-xs text-slate-500 tracking-widest">PROJECTS</div>
+                            </div>
+                            <div class="w-px bg-fun-border"></div>
+                            <div class="text-center md:text-left">
+                                <div class="font-heading text-3xl text-fun-accent2">C#</div>
+                                <div class="font-mono text-xs text-slate-500 tracking-widest">LANGUAGE</div>
+                            </div>
+                            <div class="w-px bg-fun-border"></div>
+                            <div class="text-center md:text-left">
+                                <div class="font-heading text-3xl text-fun-accent3">UNITY</div>
+                                <div class="font-mono text-xs text-slate-500 tracking-widest">ENGINE</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                            <a href="#portofolio" class="btn-primary">
+                                <i data-lucide="play" class="w-3 h-3"></i> LAUNCH PROJECTS
+                            </a>
+                            <a href="#kontak" class="btn-ghost">
+                                <i data-lucide="radio" class="w-3 h-3"></i> CONNECT
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT — Photo -->
+                    <div class="flex-shrink-0 flex justify-center">
+                        <div class="floating">
+                            <div class="photo-frame relative" style="padding:3px; background:conic-gradient(#f97316,#6366f1,#0ea5e9,#f97316); border-radius:18px;">
+                                <div class="photo-frame-inner relative" style="width:260px;height:320px; border-radius:14px; overflow:hidden; background:#111;">
+                                    <img src="assets/pp1.jpg" alt="Farih Rahmatullah"
+                                         style="width:100%;height:100%;object-fit:cover;filter:grayscale(20%) contrast(1.05);"
+                                         class="transition-all duration-700 hover:filter-none">
+                                    <!-- Corner brackets -->
+                                    <div class="bracket-tl"></div>
+                                    <div class="bracket-tr"></div>
+                                    <div class="bracket-bl"></div>
+                                    <div class="bracket-br"></div>
+                                    <!-- Scan line -->
+                                    <div class="scan-line-anim"></div>
+                                    <!-- ID Label -->
+                                    <div style="position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(transparent,rgba(0,0,0,0.9));z-index:10;">
+                                        <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:#f97316;letter-spacing:0.15em;">ID::FARIH_RAHMATULLAH</div>
+                                        <div style="font-family:'Share Tech Mono',monospace;font-size:0.55rem;color:#475569;letter-spacing:0.1em;">STATUS::AVAILABLE</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Scroll hint -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+                <span class="font-mono text-xs text-slate-500 tracking-widest">SCROLL</span>
+                <div style="width:1px;height:40px;background:linear-gradient(#f97316,transparent);"></div>
+            </div>
+        </section>
+
+        <!-- ======================== ABOUT ======================== -->
+        <section id="tentang" class="py-28 about-section relative">
+
             <div class="container mx-auto px-6">
-                <div class="grid md:grid-cols-2 gap-16 items-center">
+
+                <div class="section-label mb-4">ABOUT_ME.EXE</div>
+                <div class="grid md:grid-cols-2 gap-20 items-start">
+
+                    <!-- BIO -->
                     <div>
-                        <h2 class="text-5xl font-black mb-8 border-l-8 border-fun-accent1 pl-6">ABOUT ME</h2>
-                        <p class="text-gray-400 text-lg mb-6 leading-relaxed">
-                            Saya mahasiswa semester 5 yang fokus pada pengembangan game menggunakan Unity.<br><br> Saya tertarik pada pembuatan mekanik gameplay, kontrol karakter, sistem fisika, dan UI game yang terasa responsif dan menyenangkan dimainkan. Saya menguasai Unity, C#, dan Git, serta memiliki pengalaman mengerjakan beberapa proyek pribadi.<br><br> Saya selalu berusaha berkembang dengan mempelajari teknik baru untuk
-meningkatkan kualitas game yang saya buat</span>
-                        </p>
-                        <div class="flex flex-wrap gap-4">
-                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">C#</span>
-                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">UNINTY ENGINE</span>
-                            <span class="px-4 py-2 bg-zinc-800 border border-zinc-700 rounded text-sm font-bold">GIT / GITHUB</span>
+                        <h2 class="font-heading text-6xl text-white mb-8 leading-none">
+                            ABOUT<br><span class="text-fun-accent1">ME</span>
+                        </h2>
+
+                        <div class="terminal-box rounded-none mb-8">
+                            <div class="terminal-header">farih@dev ~ cat about.md</div>
+                            <div class="p-6 pt-4 font-mono text-sm text-slate-400 leading-relaxed space-y-4">
+                                <p><span class="text-fun-accent1">›</span> Mahasiswa semester 5 yang fokus pada pengembangan game menggunakan Unity.</p>
+                                <p><span class="text-fun-accent2">›</span> Tertarik pada pembuatan mekanik gameplay, kontrol karakter, sistem fisika, dan UI game yang terasa responsif dan menyenangkan dimainkan.</p>
+                                <p><span class="text-fun-accent3">›</span> Menguasai Unity, C#, dan Git, serta memiliki pengalaman mengerjakan beberapa proyek pribadi.</p>
+                                <p><span class="text-fun-accent1">›</span> Selalu berusaha berkembang dengan mempelajari teknik baru untuk meningkatkan kualitas game yang dibuat.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3">
+                            <span class="tech-tag text-fun-accent1 border-fun-accent1/30">C#</span>
+                            <span class="tech-tag text-fun-accent2 border-fun-accent2/30">UNITY ENGINE</span>
+                            <span class="tech-tag text-fun-accent3 border-fun-accent3/30">GIT / GITHUB</span>
+                            <span class="tech-tag text-slate-400 border-slate-700">GAME DESIGN</span>
+                            <span class="tech-tag text-slate-400 border-slate-700">PHYSICS SYS</span>
                         </div>
                     </div>
 
-                    <div class="pop-card p-8 border-zinc-700">
-                        <h3 class="font-pixel text-2xl mb-6 text-fun-accent1 tracking-tighter">KEMAMPUAN</h3>
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>Logic</span><span>88%</span></div>
-                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
-                                    <div class="h-full bg-fun-accent2 w-[88%]"></div>
+                    <!-- SKILLS PANEL -->
+                    <div>
+                        <div class="terminal-box rounded-none">
+                            <div class="terminal-header">farih@dev ~ ./run_diagnostics.sh</div>
+                            <div class="p-6 space-y-8">
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-mono text-xs text-slate-500">01</span>
+                                            <span class="font-mono text-sm text-slate-300 tracking-widest">LOGIC</span>
+                                        </div>
+                                        <span class="font-mono text-xs text-fun-accent2">88%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill bg-fun-accent2" style="width:88%"></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>Unity Engine</span><span>79%</span></div>
-                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
-                                    <div class="h-full bg-fun-accent1 w-[79%]"></div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-mono text-xs text-slate-500">02</span>
+                                            <span class="font-mono text-sm text-slate-300 tracking-widest">UNITY ENGINE</span>
+                                        </div>
+                                        <span class="font-mono text-xs text-fun-accent1">79%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill bg-fun-accent1" style="width:79%"></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between font-bold mb-2 text-sm uppercase tracking-widest text-gray-400"><span>C#</span><span>80%</span></div>
-                                <div class="h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
-                                    <div class="h-full bg-fun-accent3 w-[80%]"></div>
+
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <div class="flex items-center gap-3">
+                                            <span class="font-mono text-xs text-slate-500">03</span>
+                                            <span class="font-mono text-sm text-slate-300 tracking-widest">C# LANGUAGE</span>
+                                        </div>
+                                        <span class="font-mono text-xs text-fun-accent3">80%</span>
+                                    </div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill bg-fun-accent3" style="width:80%"></div>
+                                    </div>
                                 </div>
+
+                                <div class="pt-4 border-t border-fun-border">
+                                    <div class="font-mono text-xs text-slate-600 tracking-widest mb-3">TOOLS / ECOSYSTEM</div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-fun-accent1"></div>
+                                            <span class="font-mono text-xs text-slate-400">Visual Studio</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-fun-accent2"></div>
+                                            <span class="font-mono text-xs text-slate-400">Git / GitHub</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-fun-accent3"></div>
+                                            <span class="font-mono text-xs text-slate-400">Unity Physics</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-1.5 h-1.5 rounded-full bg-slate-500"></div>
+                                            <span class="font-mono text-xs text-slate-400">Itch.io</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <section id="portofolio" class="py-24">
-    <div class="container mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
-            <h2 class="text-6xl font-black italic">TOP MISSIONS</h2>
-            <p class="text-fun-accent1 font-pixel text-xl tracking-tighter">/// SELECT_PROJECT_v2.0</p>
-        </div>
+        <!-- ======================== WORKS ======================== -->
+        <section id="portofolio" class="py-28 relative" style="background:#060606;">
 
-        <div class="grid md:grid-cols-2 gap-12">
-            <div class="pop-card group relative overflow-hidden border-zinc-800 bg-zinc-900">
-                <div class="h-64 overflow-hidden border-b-2 border-black relative">
-                    <img src="assets/mole.png" alt="Mole Run" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="container mx-auto px-6">
+
+                <div class="section-label mb-4">TOP_MISSIONS.LOG</div>
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+                    <h2 class="font-heading text-6xl md:text-7xl text-white leading-none">
+                        TOP<br><span class="text-fun-accent1">MISSIONS</span>
+                    </h2>
+                    <div class="font-mono text-xs text-slate-600 tracking-widest text-right">
+                        <div>SELECT_PROJECT_v2.0</div>
+                        <div class="text-fun-accent1 mt-1">2 ACTIVE DEPLOYMENTS</div>
+                    </div>
                 </div>
-                
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white">Mole Run</h3>
-                        <span class="text-xs font-bold px-3 py-1 bg-fun-accent2/20 text-fun-accent2 border border-fun-accent2/50 rounded uppercase">Action</span>
+
+                <div class="grid md:grid-cols-2 gap-8">
+
+                    <!-- CARD 1 -->
+                    <div class="project-card">
+                        <div class="scan-line-anim"></div>
+                        <div class="project-img-wrap" style="height:260px;">
+                            <img src="assets/mole.png" alt="Mole Run">
+                        </div>
+                        <div class="p-8 relative z-10">
+                            <div class="flex justify-between items-start mb-5">
+                                <div>
+                                    <div class="font-mono text-xs text-fun-accent2 tracking-widest mb-2">PROJECT_01 // ACTION</div>
+                                    <h3 class="font-heading text-4xl text-white tracking-wide">MOLE RUN</h3>
+                                </div>
+                                <span class="tech-tag text-fun-accent2 border-fun-accent2/40">ACTION</span>
+                            </div>
+                            <p class="font-mono text-xs text-slate-500 mb-8 leading-relaxed">
+                                Endless runner terinspirasi dino run dengan twist unik: masuk ke dalam tanah untuk menghindari bahaya. Gunakan kecepatan, timing, dan insting hewan pengeruk tanah untuk bertahan selama mungkin.
+                            </p>
+                            <div class="flex gap-3">
+                                <a href="https://wekawekadev.itch.io/mole-run" class="btn-primary flex-1 justify-center">
+                                    <i data-lucide="download" class="w-3 h-3"></i> DOWNLOAD
+                                </a>
+                                <a href="https://github.com/farihrahmatullah/MoleRun" class="btn-ghost flex-1 justify-center">
+                                    <i data-lucide="github" class="w-3 h-3"></i> SOURCE
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-gray-400 mb-8 text-sm leading-relaxed">Mole Run adalah game endless runner ringan dan cepat yang terinspirasi dari gaya dino run, namun dengan twist unik: kamu dapat masuk ke dalam tanah kapan saja untuk menghindari bahaya. Gunakan kecepatan, timing, dan insting hewan pengeruk tanah untuk bertahan selama mungkin.</p>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <a href="https://wekawekadev.itch.io/mole-run" class="pop-button bg-fun-accent1 text-black font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-orange-500 transition-colors">
-                            <i data-lucide="download" class="w-4 h-4"></i> DOWNLOAD
-                        </a>
-                        <a href="https://github.com/farihrahmatullah/MoleRun" class="border-2 border-white/20 text-white font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-black transition-all">
-                            <i data-lucide="github" class="w-4 h-4"></i> SOURCE
-                        </a>
+
+                    <!-- CARD 2 -->
+                    <div class="project-card">
+                        <div class="scan-line-anim" style="animation-delay:-1.5s"></div>
+                        <div class="project-img-wrap" style="height:260px;">
+                            <img src="assets/neurun.png" alt="Neurun">
+                        </div>
+                        <div class="p-8 relative z-10">
+                            <div class="flex justify-between items-start mb-5">
+                                <div>
+                                    <div class="font-mono text-xs text-fun-accent3 tracking-widest mb-2">PROJECT_02 // EDU</div>
+                                    <h3 class="font-heading text-4xl text-white tracking-wide">NEURUN</h3>
+                                </div>
+                                <span class="tech-tag text-fun-accent3 border-fun-accent3/40">EDU-GAME</span>
+                            </div>
+                            <p class="font-mono text-xs text-slate-500 mb-8 leading-relaxed">
+                                Aplikasi belajar Hiragana & Katakana yang dirancang untuk pemula melalui latihan cepat, interaktif, dan berulang. Belajar lewat pengenalan bentuk huruf, penyusunan kata, dan respon instan.
+                            </p>
+                            <div class="flex gap-3">
+                                <a href="https://play.google.com/store/apps/details?id=com.Wekaweka.Neurun" class="btn-primary flex-1 justify-center">
+                                    <i data-lucide="play" class="w-3 h-3"></i> PLAY NOW
+                                </a>
+                                <a href="https://github.com/farihrahmatullah/Neurun" class="btn-ghost flex-1 justify-center">
+                                    <i data-lucide="github" class="w-3 h-3"></i> SOURCE
+                                </a>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
+        </section>
 
-            <div class="pop-card group relative overflow-hidden border-zinc-800 bg-zinc-900">
-                <div class="h-64 overflow-hidden border-b-2 border-black relative">
-                    <img src="assets/neurun.png" alt="Neurun" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                </div>
-                
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-3xl font-black uppercase tracking-tighter text-white">Neurun</h3>
-                        <span class="text-xs font-bold px-3 py-1 bg-fun-accent3/20 text-fun-accent3 border border-fun-accent3/50 rounded uppercase">Puzzle</span>
+        <!-- ======================== CONTACT ======================== -->
+        <section id="kontak" class="contact-section py-28">
+            <div class="container mx-auto px-6 max-w-5xl">
+
+                <div class="section-label mb-4">CONTACT_PROTOCOL.SH</div>
+                <h2 class="font-heading text-6xl text-white mb-16 leading-none">
+                    OPEN<br><span class="text-fun-accent1">CHANNEL</span>
+                </h2>
+
+                <div class="grid md:grid-cols-5 gap-16">
+
+                    <!-- INFO -->
+                    <div class="md:col-span-2 space-y-8">
+                        <p class="font-mono text-xs text-slate-500 leading-relaxed">
+                            Tinggalkan pesan setelah bunyi beep untuk kolaborasi level selanjutnya.
+                        </p>
+
+                        <div class="space-y-4">
+                            <div class="stat-card">
+                                <div class="font-mono text-xs text-slate-600 tracking-widest mb-1">SIGNAL::EMAIL</div>
+                                <div class="font-mono text-xs text-fun-accent1">farihrahmatullah453@gmail.com</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="font-mono text-xs text-slate-600 tracking-widest mb-1">REPO::GITHUB</div>
+                                <div class="font-mono text-xs text-fun-accent2">github.com/farihrahmatullah</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="font-mono text-xs text-slate-600 tracking-widest mb-1">STATUS::AVAILABILITY</div>
+                                <div class="flex items-center gap-2">
+                                    <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:blink 1.5s ease infinite;"></div>
+                                    <span class="font-mono text-xs text-green-400">OPEN_TO_WORK</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-gray-400 mb-8 text-sm leading-relaxed">Neurun adalah aplikasi belajar Hiragana dan Katakana yang dirancang untuk membantu pemula menguasai huruf Jepang melalui latihan cepat, interaktif, dan berulang. Tidak ada teori panjang pengguna langsung belajar lewat pengenalan bentuk huruf, penyusunan kata, dan respon instan.</p>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <a href=" https://play.google.com/store/apps/details?id=com.Wekaweka.Neurun" class="pop-button bg-fun-accent1 text-black font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-orange-500 transition-colors">
-                            <i data-lucide="play" class="w-4 h-4"></i> PLAY NOW
-                        </a>
-                        <a href="https://github.com/farihrahmatullah/Neurun" class="border-2 border-white/20 text-white font-black py-3 rounded flex items-center justify-center gap-2 text-sm hover:bg-white hover:text-black transition-all">
-                            <i data-lucide="github" class="w-4 h-4"></i> SOURCE
-                        </a>
+
+                    <!-- FORM -->
+                    <div class="md:col-span-3">
+                        <form action="https://formsubmit.co/farihrahmatullah453@gmail.com" method="POST" class="space-y-4">
+                            <input type="hidden" name="_subject" value="Pesan dari Portfolio Website">
+                            <input type="hidden" name="_captcha" value="false">
+                            <input type="hidden" name="_template" value="table">
+
+                            <div>
+                                <label class="font-mono text-xs text-slate-600 tracking-widest block mb-2">YOUR_IDENTIFIER</label>
+                                <input type="text" name="name" required class="input-tech" placeholder="your_name">
+                            </div>
+
+                            <div>
+                                <label class="font-mono text-xs text-slate-600 tracking-widest block mb-2">YOUR_EMAIL</label>
+                                <input type="email" name="email" required class="input-tech" placeholder="you@example.com">
+                            </div>
+
+                            <div>
+                                <label class="font-mono text-xs text-slate-600 tracking-widest block mb-2">MISSION_DETAILS</label>
+                                <textarea name="message" rows="5" required class="input-tech resize-none" placeholder="Describe your mission..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn-primary w-full justify-center" style="font-size:0.7rem;letter-spacing:0.2em;padding:16px;">
+                                <i data-lucide="send" class="w-3 h-3"></i> EXECUTE SEND
+                            </button>
+                        </form>
                     </div>
+
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
-        <section id="kontak" class="py-24 bg-black border-t border-fun-border">
-  <div class="container mx-auto px-6 max-w-4xl">
-    <div class="grid md:grid-cols-3 gap-12">
-
-      <!-- INFO -->
-      <div class="md:col-span-1">
-        <h2 class="text-4xl font-black mb-6 uppercase">Transmission</h2>
-        <p class="text-gray-500 mb-8 font-medium italic">
-          "Tinggalkan pesan setelah bunyi beep untuk kolaborasi level selanjutnya."
-        </p>
-
-        <div class="space-y-4 font-bold">
-          <div class="flex items-center gap-3 text-fun-accent1">
-            <i data-lucide="mail"></i>
-            farihrahmatullah453@gmail.com
-          </div>
-          <div class="flex items-center gap-3">
-            <i data-lucide="github"></i>
-            github.com/farihrahmatullah
-          </div>
-        </div>
-      </div>
-
-      <!-- FORM -->
-      <div class="md:col-span-2">
-        <form
-          action="https://formsubmit.co/farihrahmatullah453@gmail.com"
-          method="POST"
-          class="space-y-6"
-        >
-          <!-- CONFIG -->
-          <input type="hidden" name="_subject" value="Pesan dari Portfolio Website">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
-
-          <!-- INPUT -->
-          <input
-            type="text"
-            name="name"
-            required
-            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
-            placeholder="YOUR_IDENTIFIER"
-          >
-
-          <input
-            type="email"
-            name="email"
-            required
-            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
-            placeholder="YOUR_EMAIL"
-          >
-
-          <textarea
-            name="message"
-            rows="5"
-            required
-            class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded focus:border-fun-accent1 focus:outline-none transition-colors"
-            placeholder="THE_MISSION_DETAILS"
-          ></textarea>
-
-          <!-- BUTTON -->
-          <button
-            type="submit"
-            class="w-full pop-button bg-fun-accent1 text-black font-black py-4 rounded uppercase tracking-widest text-lg"
-          >
-            EXECUTE SEND
-          </button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</section>
+        </section>
 
     </main>
 
-    <footer class="py-8 bg-zinc-950 text-gray-600 text-center font-pixel text-sm border-t border-zinc-900">
-        <p>[ ERROR 404: QUIT NOT FOUND ] © 2025 COMMAND_CENTER</p>
+    <!-- FOOTER -->
+    <footer style="background:#030303;border-top:1px solid #1e2a38;padding:24px;" class="text-center">
+        <div class="font-mono text-xs text-slate-700 tracking-widest">
+            [ ERROR 404: QUIT NOT FOUND ] &nbsp;|&nbsp; © 2025 FARIH.DEV &nbsp;|&nbsp; COMMAND_CENTER_v2.0
+        </div>
     </footer>
 
+    <!-- ==================== SCRIPTS ==================== -->
     <script>
         lucide.createIcons();
-        
-        // Canvas Particles (Techy Look)
+
+        // Mobile menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+        // Particle canvas — tech grid dots
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+        let W, H, particles = [];
 
         function resize() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
         }
 
         class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.size = Math.random() * 2;
-                this.speedY = Math.random() * 0.5 + 0.2;
-                this.opacity = Math.random();
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * W;
+                this.y = Math.random() * H;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = -Math.random() * 0.4 - 0.1;
+                this.opacity = Math.random() * 0.4 + 0.05;
+                this.life = 0;
+                this.maxLife = Math.random() * 300 + 200;
+                // Color: mostly orange, some blue/indigo
+                const r = Math.random();
+                if (r < 0.6) this.color = '249,115,22';
+                else if (r < 0.8) this.color = '14,165,233';
+                else this.color = '99,102,241';
             }
             update() {
-                this.y -= this.speedY;
-                if (this.y < 0) this.y = height;
+                this.x += this.speedX; this.y += this.speedY;
+                this.life++;
+                if (this.life > this.maxLife || this.y < 0) this.reset();
             }
             draw() {
-                ctx.fillStyle = `rgba(249, 115, 22, ${this.opacity})`;
+                const fade = Math.sin((this.life / this.maxLife) * Math.PI);
+                ctx.fillStyle = `rgba(${this.color},${this.opacity * fade})`;
                 ctx.fillRect(this.x, this.y, this.size, this.size);
             }
         }
 
         function init() {
             particles = [];
-            for (let i = 0; i < 100; i++) particles.push(new Particle());
+            for (let i = 0; i < 120; i++) {
+                const p = new Particle();
+                p.life = Math.floor(Math.random() * p.maxLife);
+                particles.push(p);
+            }
         }
 
         function animate() {
-            ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, W, H);
             particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
 
         window.addEventListener('resize', () => { resize(); init(); });
         resize(); init(); animate();
-    </script>
 
-     <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => {
+                if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id');
+            });
+            navLinks.forEach(link => {
+                link.style.color = link.getAttribute('href') === `#${current}` ? '#f97316' : '';
+            });
         });
     </script>
 
 </body>
-
 </html>
-
